@@ -1,0 +1,74 @@
+nginx -h = Exibe as opções de parâmetros
+-t = verifica se o arquivo de configuração está ok
+-V = exibe os módluos carregados pelo NGINX
+-s = manda uma mensagem para iniciar matar parar ou reabrir o serviço (stop, start, reload)
+
+O apontamento do index da pagina fica configurada dentro do seguinte arquivo
+/etc/nginx/conf.d/default.conf
+
+Para apontar um arquivo de configuração no nginx.conf basta aponta-lo da seguinte forma
+include nome_arquivo = esse arquivo deverá estar no mesmo diretório do /etc/nginx
+Assim o Nginx lerá o .conf pricipal e suas referêcias que encontram lá dentro.
+
+Configurações NGINX.CONF
+-------------------------- 
+Colocando no inicio da linha do nginx.conf a linha
+daemon off; desabilitará o processo em segundo plano.
+Essa linha não existe por padrão.
+
+debug_points stop or abort = para realização de debug caso algo de errado ocorra, essa linha também não existe, e poderá ser crescentado caso queira.env VARIABLE=valor; = Desta forma podemos criar variaveis dentro do nosso arquivo para chamalo futuramente
+
+worker_process = aqui definimos quantos nucloes podemo utilizar
+load_module lib64/nginx/modules/nome_modulo.so = são os módulos que podemos carregar
+error_log /var/log/nginx/error.log; = logs comuns
+error_log /var/log/nginx/error.log info;= logs de informação (info, notice, error, crit, alert)
+log_not_found /var/log/nginx/notfound.log = cada vez que der erro 404 será escrito neste arquivo.
+
+worker_conections = defini a quantidade de conxões por vez.
+
+Diretiva http, server: Configuração de socket e Hosts
+------------------------------------------------------
+Diretiva http que encontra-se dentro do carquivo de configuração principal do nginx é diretiva principal
+Diretiva Server = é onde configuraremos nossos virtual hosts, podendo ser ser referenciada como iclude e o documento , no nginx.conf ou a configuração expicita no documento nginx.conf
+
+Vamos ao exemplo:::
+para criação de um virtualhost criaremos um arquivo por exemplo, não precisa ser esse nome.
+/etc/nginx/server
+server
+{
+	listen 172.17.0.2:80 default_server; # Ele vai trabalhar nesse IP e porta
+	listen [::]:80; # mesma coisa só que IPV6
+#	listen 443 ssl; #SSL se possuir.
+	server_name localhost www.teste.local teste.local; #Nome DNS que daremos
+	root /etc/nginx; # Diretório Raiz onde encontra-se o arquivos, pode ser definido dentro de (http, server, location)
+	index index.html; # Diretório Padrão HTML
+}
+
+Dentro das configirações de nginx.conf, colocaremos a linha que faz referência a esse arquivo, dentro do parâmetro do http.
+include server;
+
+- Obs : Desta forma já temos a publicação do nosso Host
+
+
+Configuração de Rotas e Arquivos.
+----------------------------------
+root - Diretório Raiz onde encontra-se o arquivos, pode ser definido dentro de (http, server, location)
+alias = para criar um alias definimos da seguinte forma.
+
+dentro do nosso arquivo criado server podemos incluir dentro dos colchetes as seguinte informação.
+
+location /admin/
+{
+    alias /var/www/html/; # Aqui deverá conter as páginas de adm por exemplo.
+}
+
+
+
+
+
+
+
+
+
+
+
